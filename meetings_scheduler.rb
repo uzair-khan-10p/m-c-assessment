@@ -1,6 +1,6 @@
 # This class will schedule your meetings in a 9-5 working hours
 class MeetingsScheduler
-  attr_reader :onsite_meetings, :offsite_meetings
+  attr_reader :onsite_meetings, :offsite_meetings, :scheduled_meetings
   attr_accessor :start_time
 
   HOURS_SPAN = 8
@@ -10,7 +10,8 @@ class MeetingsScheduler
 
     @onsite_meetings = meetings.select { |m| m[:type] == :onsite }
     @offsite_meetings = meetings.select { |m| m[:type] == :offsite }
-    @start_time = Time.new(2020, 01, 01, 9, 0, 0) # 9 AM time object initialized
+    ctime = Time.now
+    @start_time = Time.new(ctime.year, ctime.month, ctime.day, 9, 0, 0) # 9 AM time object initialized
     @scheduled_meetings = []
   end
 
