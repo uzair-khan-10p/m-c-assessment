@@ -27,6 +27,28 @@ RSpec.describe MeetingsScheduler do
     ]
   end
 
+  let(:example_3) do
+    [
+      { name: 'Meeting 1', duration: 0.5, type: :offsite },
+      { name: 'Meeting 2', duration: 0.5, type: :onsite },
+      { name: 'Meeting 3', duration: 2.5, type: :offsite },
+      { name: 'Meeting 4', duration: 3, type: :onsite }
+    ]
+  end
+
+  let(:example_4) do
+    [
+      { name: 'Meeting 1', duration: 4, type: :offsite },
+      { name: 'Meeting 2', duration: 3.5, type: :offsite }
+    ]
+  end
+
+  let(:example_5) do
+    [
+      { name: 'Meeting 1', duration: 8, type: :offsite }
+    ]
+  end
+
   it 'raises error on invalid argument' do
     expect { described_class.new(123) }.to raise_error 'Invalid argument structure.'
   end
@@ -64,6 +86,31 @@ RSpec.describe MeetingsScheduler do
         expect(scheduler.scheduled_meetings[2]).to eq '12:00 PM -  2:00 PM - Meeting 2'
         expect(scheduler.scheduled_meetings[3]).to eq ' 2:30 PM -  3:30 PM - Meeting 4'
         expect(scheduler.scheduled_meetings[4]).to eq ' 4:00 PM -  5:00 PM - Meeting 5'
+      end
+
+      it 'in order with example_3' do
+        scheduler = described_class.new(example_3)
+        scheduler.schedule
+
+        expect(scheduler.scheduled_meetings[0]).to eq ' 9:00 AM -  9:30 AM - Meeting 2'
+        expect(scheduler.scheduled_meetings[1]).to eq ' 9:30 AM - 12:30 PM - Meeting 4'
+        expect(scheduler.scheduled_meetings[2]).to eq ' 1:00 PM -  1:30 PM - Meeting 1'
+        expect(scheduler.scheduled_meetings[3]).to eq ' 2:00 PM -  4:30 PM - Meeting 3'
+      end
+
+      it 'in order with example_4' do
+        scheduler = described_class.new(example_4)
+        scheduler.schedule
+
+        expect(scheduler.scheduled_meetings[0]).to eq ' 9:00 AM -  1:00 PM - Meeting 1'
+        expect(scheduler.scheduled_meetings[1]).to eq ' 1:30 PM -  5:00 PM - Meeting 2'
+      end
+
+      it 'in order with example_5' do
+        scheduler = described_class.new(example_5)
+        scheduler.schedule
+
+        expect(scheduler.scheduled_meetings[0]).to eq ' 9:00 AM -  5:00 PM - Meeting 1'
       end
     end
   end
