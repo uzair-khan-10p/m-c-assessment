@@ -16,20 +16,14 @@ class MeetingsScheduler
   end
 
   def schedule
-    unless can_fit?
-      puts 'No, can’t fit.'
-      return
-    end
+    return unless can_fit?
 
     onsite_meetings.each { |meeting| assign_slot meeting }
 
     offsite_meetings.each do |meeting|
-      @start_time += 1800 # pad 30 minutes for offsite meetings
+      @start_time += 1800 if @scheduled_meetings.length > 0 # pad 30 minutes for offsite meetings
       assign_slot meeting
     end
-
-    puts 'Yes, can fit. One possible solution would be:'
-    @scheduled_meetings.each { |m| puts m  }
   end
 
   def can_fit?
@@ -37,7 +31,8 @@ class MeetingsScheduler
     onsite_meetings.each { |m| total_hours += m[:duration] }
     offsite_meetings.each { |m| total_hours += m[:duration] + 0.5 }
 
-    total_hours <= HOURS_SPAN
+    only_offsite_meetings = onsite_meetings.length + offsite_meetings.length == offsite_meetings.length
+    total_hours <= (only_offsite_meetings ? HOURS_SPAN + 0.5 : HOURS_SPAN)
   end
 
   private
