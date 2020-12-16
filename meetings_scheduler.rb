@@ -1,6 +1,6 @@
 # This class will schedule your meetings in a 9-5 working hours
 class MeetingsScheduler
-  attr_reader :onsite_meetings, :offsite_meetings, :scheduled_meetings
+  attr_reader :onsite_meetings, :offsite_meetings, :scheduled_meetings, :label
   attr_accessor :start_time
 
   HOURS_SPAN = 8
@@ -13,13 +13,17 @@ class MeetingsScheduler
     ctime = Time.now
     @start_time = Time.new(ctime.year, ctime.month, ctime.day, 9, 0, 0) # 9 AM time object initialized
     @scheduled_meetings = []
+    @label = ''
   end
 
   def schedule
-    return unless can_fit?
+    unless can_fit?
+      @label = 'No, can’t fit.'
+      return
+    end
 
+    @label = 'Yes, can fit. One possible solution would be:'
     onsite_meetings.each { |meeting| assign_slot meeting }
-
     offsite_meetings.each do |meeting|
       @start_time += 1800 if @scheduled_meetings.length > 0 # pad 30 minutes for offsite meetings
       assign_slot meeting
@@ -33,6 +37,12 @@ class MeetingsScheduler
 
     only_offsite_meetings = onsite_meetings.length + offsite_meetings.length == offsite_meetings.length
     total_hours <= (only_offsite_meetings ? HOURS_SPAN + 0.5 : HOURS_SPAN)
+  end
+
+  # only for displaying output
+  def display_schedules
+    puts label
+    puts scheduled_meetings
   end
 
   private

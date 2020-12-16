@@ -66,6 +66,7 @@ RSpec.describe MeetingsScheduler do
         scheduler = described_class.new(example_2)
         scheduler.schedule
         expect(scheduler.scheduled_meetings.length).to eq(0)
+        expect(scheduler.label).to eq 'No, can’t fit.'
       end
     end
 
@@ -75,6 +76,7 @@ RSpec.describe MeetingsScheduler do
         expect(scheduler.scheduled_meetings.length).to eq(0)
         scheduler.schedule
         expect(scheduler.scheduled_meetings.length).to eq(4)
+        expect(scheduler.label).to eq 'Yes, can fit. One possible solution would be:'
       end
 
       it 'in order with example_1' do
